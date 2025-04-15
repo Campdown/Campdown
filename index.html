@@ -12,27 +12,38 @@
       padding: 20px;
     }
     h1 {
-      font-size: 2em;
+      font-size: 3vw; /* Responsive font size */
       margin-bottom: 20px;
     }
     .countdown-container {
       margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* Center items horizontally */
     }
     .countdown {
-      font-size: 1.5em;
+      font-size: 2em; /* Responsive font size */
       font-weight: bold;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 20px;
+      border-radius: 10px;
       margin: 10px auto;
-      max-width: 300px;
+      max-width: 90%; /* Make it responsive */
       color: white;
     }
     .date-text {
-      font-size: 1em;
+      font-size: 1.2em; /* Slightly larger font for date */
       margin-top: 5px;
     }
     .info-text {
       margin-top: 30px;
+      font-size: 1em; /* Ensure text is legible */
+    }
+    a {
+      color: #ea791b; /* Maintain link color */
+      text-decoration: none; /* Remove underline for links */
+    }
+    a:hover {
+      text-decoration: underline; /* Underline on hover for better UX */
     }
   </style>
 </head>
@@ -42,7 +53,7 @@
 <div id="countdowns"></div>
 
 <div class="info-text">
-    Telegram Bot: <a href="http://telegram.me/Campdownbot" style="color: #ea791b;">Click here</a>
+    Telegram Bot: <a href="http://telegram.me/Campdownbot">Click here</a>
 </div>
 
 <script>
@@ -53,14 +64,12 @@
       if (!res.ok) throw new Error(`Failed to fetch dates.txt: ${res.status}`);
       const text = await res.text();
       
-      // Split file into groups (each group separated by a line with a single "-")
       const groups = text.trim().split(/\r?\n-\r?\n/).map(g => g.trim()).filter(Boolean);
       const container = document.getElementById('countdowns');
       
       groups.forEach((group, index) => {
         const lines = group.split('\n').map(l => l.trim()).filter(Boolean);
         const entries = [];
-        // Each event uses three lines: name, date, color.
         for (let i = 0; i < lines.length; i += 3) {
           const name = lines[i];
           const date = new Date(lines[i + 1]);
@@ -72,7 +81,6 @@
           }
         }
 
-        // Get next upcoming event (if there is one)
         const now = new Date();
         const upcoming = entries.filter(e => e.date > now).sort((a, b) => a.date - b.date);
         if (!upcoming.length) {
@@ -81,7 +89,6 @@
         }
         const next = upcoming[0];
 
-        // Create container elements
         const div = document.createElement('div');
         div.className = 'countdown-container';
         div.innerHTML = `
@@ -118,13 +125,11 @@
       document.getElementById(elementId).innerText =
         `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
 
-      // Display the target date in the "no-NO" locale
       document.getElementById(dateTextId).innerText =
         targetDate.toLocaleString('no-NO');
     }, 1000);
   }
 
-  // Initialize countdowns when page is loaded
   window.addEventListener("DOMContentLoaded", loadCountdowns);
 </script>
 
