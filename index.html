@@ -2,66 +2,65 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure proper scaling on mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campdown</title>
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <style>
     body {
       font-family: Arial, sans-serif;
+      text-align: center;
       background-color: #12160d;
       color: white;
-      text-align: center;
       padding: 20px;
-      margin: 0; /* Remove default margin */
     }
     h1 {
-      font-size: 8vw; /* Responsive font size */
-      margin-bottom: 20px;
+      font-size: 2em;
+      margin-bottom: 15px;
     }
     .countdown-container {
       margin-bottom: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 600px; /* Limit max width for better readability */
-      margin-left: auto; /* Center container */
-      margin-right: auto; /* Center container */
     }
     .countdown {
-      font-size: 6vw; /* Responsive font size */
+      font-size: 1.8em;
       font-weight: bold;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 10px auto;
-      width: 90%; /* Make it responsive */
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 5px;
       color: white;
-      background-color: #333; /* Default background color */
+      background-color: #333;
     }
     .date-text {
-      font-size: 5vw; /* Responsive font size */
-      margin-top: 5px;
+      font-size: 1em;
+      margin-top: 10px;
+      color: white;
     }
     .info-text {
+      font-size: 1em;
       margin-top: 30px;
-      font-size: 5vw; /* Responsive font size */
+      color: white;
     }
     a {
       color: #ea791b;
-      text-decoration: none;
-    }
-    a:hover {
       text-decoration: underline;
     }
 
-    /* Media queries for smaller screens */
-    @media (max-width: 600px) {
+    /* Specific IDs for custom colors, if needed */
+    #countdown1 {
+      background-color: #e14521;
+    }
+    #countdown2 {
+      background-color: #004741;
+    }
+    #countdown3 {
+      background-color: #d400ff;
+    }
+
+    @media (max-width: 480px) {
       h1 {
-        font-size: 10vw; /* Larger heading for small screens */
+        font-size: 1.8em;
       }
-      .countdown {
-        font-size: 7vw; /* Adjust countdown font size */
-      }
-      .date-text, .info-text {
-        font-size: 6vw; /* Adjust text size */
+      .countdown, .info-text, .date-text {
+        font-size: 1.5em;
       }
     }
   </style>
@@ -72,7 +71,7 @@
 <div id="countdowns"></div>
 
 <div class="info-text">
-    Telegram Bot: <a href="http://telegram.me/Campdownbot">Click here</a>
+  Telegram Bot: <a href="http://telegram.me/Campdownbot">Click here</a>
 </div>
 
 <script>
@@ -81,10 +80,10 @@
       const res = await fetch('./dates.txt');
       if (!res.ok) throw new Error(`Failed to fetch dates.txt: ${res.status}`);
       const text = await res.text();
-      
+
       const groups = text.trim().split(/\r?\n-\r?\n/).map(g => g.trim()).filter(Boolean);
       const container = document.getElementById('countdowns');
-      
+
       groups.forEach((group, index) => {
         const lines = group.split('\n').map(l => l.trim()).filter(Boolean);
         const entries = [];
