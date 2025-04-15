@@ -14,7 +14,7 @@
       margin: 0; /* Remove default margin */
     }
     h1 {
-      font-size: 5vw; /* Responsive font size */
+      font-size: 8vw; /* Responsive font size */
       margin-bottom: 20px;
     }
     .countdown-container {
@@ -22,24 +22,27 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      max-width: 600px; /* Limit max width for better readability */
+      margin-left: auto; /* Center container */
+      margin-right: auto; /* Center container */
     }
     .countdown {
-      font-size: 4vw; /* Responsive font size */
+      font-size: 6vw; /* Responsive font size */
       font-weight: bold;
       padding: 20px;
       border-radius: 10px;
       margin: 10px auto;
-      max-width: 90%; /* Make it responsive */
+      width: 90%; /* Make it responsive */
       color: white;
       background-color: #333; /* Default background color */
     }
     .date-text {
-      font-size: 3vw; /* Responsive font size */
+      font-size: 5vw; /* Responsive font size */
       margin-top: 5px;
     }
     .info-text {
       margin-top: 30px;
-      font-size: 3vw; /* Responsive font size */
+      font-size: 5vw; /* Responsive font size */
     }
     a {
       color: #ea791b;
@@ -52,13 +55,13 @@
     /* Media queries for smaller screens */
     @media (max-width: 600px) {
       h1 {
-        font-size: 8vw; /* Larger heading for small screens */
+        font-size: 10vw; /* Larger heading for small screens */
       }
       .countdown {
-        font-size: 5vw; /* Adjust countdown font size */
+        font-size: 7vw; /* Adjust countdown font size */
       }
       .date-text, .info-text {
-        font-size: 4vw; /* Adjust text size */
+        font-size: 6vw; /* Adjust text size */
       }
     }
   </style>
