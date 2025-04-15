@@ -1,0 +1,38 @@
+Sommercamp 🏖
+July 21, 2025 17:00:00 GMT+0200
+#e14521
+Nyttårscamp 🎆
+December 28, 2025 19:00:00 GMT+0100
+#e14521
+-
+Påskestevnet
+April 18, 2025 19:00:00 GMT+0200
+#004741
+Pinsestevnet
+June 6, 2025 19:00:00 GMT+0200
+#004741
+Sommerstevnet-Juli
+July 11, 2025 19:00:00 GMT+0200
+#004741
+Sommerstevnet-August
+August 26, 2025 19:00:00 GMT+0200
+#004741
+Brødrestevnet
+October 16, 2025 19:00:00 GMT+0200
+#004741
+Adventstevnet-November
+November 28, 2025 19:00:00 GMT+0200
+#004741
+Adventstevnet-Desenber
+December 5, 2025 19:00:00 GMT+0200
+#004741
+-
+Frivillighetshelg-juni
+June 14, 2025 08:00:00 GMT+0200
+#d400ff
+Frivillighetshelg-September
+September 12, 2025 19:00:00 GMT+0200
+#d400ff
+Frivillighetshelg-November
+November 14, 2025 19:00:00 GMT+0200
+#d400ff
