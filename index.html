@@ -1,102 +1,131 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campdown</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #2d2d2d;
-            color: white; /* Change the text color to white */
-            padding: 20px; /* Reduced padding for mobile */
-        }
-        h1 {
-            font-size: 2em; /* Reduced font size for mobile */
-            margin-bottom: 15px; /* Reduced margin */
-        }
-        .countdown {
-            font-size: 1.8em; /* Slightly smaller font size */
-            font-weight: bold;
-            margin-top: 15px; /* Reduced margin */
-            padding: 10px;
-            border-radius: 5px;
-            color: white; /* Already set to white */
-        }
-        .info-text {
-            font-size: 1em; /* Adjusted font size for smaller screens */
-            margin-top: 10px; /* Space above the info text */
-            color: white; /* Ensure this text is also white */
-        }
-        .date-text {
-            font-size: 1em; /* For styling the date text */
-            margin-top: 10px; /* Space above the date text */
-            color: white; /* Change the date text color to white */
-        }
-        /* Specific styles for different countdowns */
-        #countdown1 {
-            background-color: #ea791b; /* Green background for the first countdown */
-        }
-        #countdown2 {
-            background-color: #004741; /* Red background for the second countdown */
-        }
-        /* Media queries for even smaller devices */
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8em; /* Reduce further on very small screens */
-            }
-            .countdown, .info-text, .date-text {
-                font-size: 1.5em; /* Make text larger for visibility */
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Campdown</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #12160d;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .countdown-container {
+      margin-bottom: 30px;
+    }
+    .countdown {
+      font-size: 1.5em;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px auto;
+      max-width: 300px;
+      color: white;
+    }
+    .date-text {
+      font-size: 1em;
+      margin-top: 5px;
+    }
+    .info-text {
+      margin-top: 30px;
+    }
+  </style>
 </head>
 <body>
 
 <h1>Campdown</h1>
+<div id="countdowns"></div>
 
-<!-- Countdown 1 -->
-<h2>Nyttårs camp</h2>
-<div class="countdown" id="countdown1"></div>
-<p class="date-text" id="date1"></p>
-
-<!-- Countdown 2 -->
-<h2>Høststevne 1 - Festhelg</h2>
-<div class="countdown" id="countdown2"></div>
-<p class="date-text" id="date2"></p>
+<div class="info-text">
+    Telegram Bot: <a href="http://telegram.me/Campdownbot" style="color: #ea791b;">Click here</a>
+</div>
 
 <script>
-    // Countdown target dates
-    const countDownDate1 = new Date("December 28, 2024 20:00:00 GMT+0200").getTime();
-    const countDownDate2 = new Date("October 04, 2024 15:00:00 GMT+0200").getTime();
+  async function loadCountdowns() {
+    try {
+      // Use a relative path for GitHub Pages.
+      const res = await fetch('./dates.txt');
+      if (!res.ok) throw new Error(`Failed to fetch dates.txt: ${res.status}`);
+      const text = await res.text();
+      
+      // Split file into groups (each group separated by a line with a single "-")
+      const groups = text.trim().split(/\r?\n-\r?\n/).map(g => g.trim()).filter(Boolean);
+      const container = document.getElementById('countdowns');
+      
+      groups.forEach((group, index) => {
+        const lines = group.split('\n').map(l => l.trim()).filter(Boolean);
+        const entries = [];
+        // Each event uses three lines: name, date, color.
+        for (let i = 0; i < lines.length; i += 3) {
+          const name = lines[i];
+          const date = new Date(lines[i + 1]);
+          const color = lines[i + 2];
+          if (!isNaN(date)) {
+            entries.push({ name, date, color });
+          } else {
+            console.error(`Invalid date for "${name}": ${lines[i + 1]}`);
+          }
+        }
 
-    // Function to start a countdown
-    function startCountdown(targetDate, elementId, dateTextId) {
-        const intervalId = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+        // Get next upcoming event (if there is one)
+        const now = new Date();
+        const upcoming = entries.filter(e => e.date > now).sort((a, b) => a.date - b.date);
+        if (!upcoming.length) {
+          console.warn(`No upcoming events for group #${index + 1}`);
+          return;
+        }
+        const next = upcoming[0];
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        // Create container elements
+        const div = document.createElement('div');
+        div.className = 'countdown-container';
+        div.innerHTML = `
+          <h2>${next.name}</h2>
+          <div class="countdown" id="countdown${index}" style="background-color: ${next.color};"></div>
+          <p class="date-text" id="date${index}"></p>
+        `;
+        container.appendChild(div);
 
-            document.getElementById(elementId).innerHTML = days + " dager " + hours + " timer " + minutes + " minutter " + seconds + " sekunder ";
-
-            const targetDateObj = new Date(targetDate);
-            document.getElementById(dateTextId).innerHTML = targetDateObj.toLocaleDateString('no-NO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            if (distance < 0) {
-                clearInterval(intervalId);
-                document.getElementById(elementId).innerHTML = "Camp er her!";
-                document.getElementById(dateTextId).innerHTML = "";
-            }
-        }, 1000);
+        startCountdown(next.date, `countdown${index}`, `date${index}`);
+      });
+    } catch (err) {
+      console.error('Error loading countdowns:', err);
     }
+  }
 
-    startCountdown(countDownDate1, "countdown1", "date1");
-    startCountdown(countDownDate2, "countdown2", "date2");
+  function startCountdown(targetDate, elementId, dateTextId) {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        clearInterval(interval);
+        document.getElementById(elementId).innerText = "Event is here!";
+        document.getElementById(dateTextId).innerText = "";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById(elementId).innerText =
+        `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
+
+      // Display the target date in the "no-NO" locale
+      document.getElementById(dateTextId).innerText =
+        targetDate.toLocaleString('no-NO');
+    }, 1000);
+  }
+
+  // Initialize countdowns when page is loaded
+  window.addEventListener("DOMContentLoaded", loadCountdowns);
 </script>
 
 </body>
