@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure proper scaling on mobile -->
   <title>Campdown</title>
   <style>
     body {
@@ -10,40 +11,55 @@
       color: white;
       text-align: center;
       padding: 20px;
+      margin: 0; /* Remove default margin */
     }
     h1 {
-      font-size: 3vw; /* Responsive font size */
+      font-size: 5vw; /* Responsive font size */
       margin-bottom: 20px;
     }
     .countdown-container {
       margin-bottom: 30px;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Center items horizontally */
+      align-items: center;
     }
     .countdown {
-      font-size: 2em; /* Responsive font size */
+      font-size: 4vw; /* Responsive font size */
       font-weight: bold;
       padding: 20px;
       border-radius: 10px;
       margin: 10px auto;
       max-width: 90%; /* Make it responsive */
       color: white;
+      background-color: #333; /* Default background color */
     }
     .date-text {
-      font-size: 1.2em; /* Slightly larger font for date */
+      font-size: 3vw; /* Responsive font size */
       margin-top: 5px;
     }
     .info-text {
       margin-top: 30px;
-      font-size: 1em; /* Ensure text is legible */
+      font-size: 3vw; /* Responsive font size */
     }
     a {
-      color: #ea791b; /* Maintain link color */
-      text-decoration: none; /* Remove underline for links */
+      color: #ea791b;
+      text-decoration: none;
     }
     a:hover {
-      text-decoration: underline; /* Underline on hover for better UX */
+      text-decoration: underline;
+    }
+
+    /* Media queries for smaller screens */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 8vw; /* Larger heading for small screens */
+      }
+      .countdown {
+        font-size: 5vw; /* Adjust countdown font size */
+      }
+      .date-text, .info-text {
+        font-size: 4vw; /* Adjust text size */
+      }
     }
   </style>
 </head>
@@ -59,7 +75,6 @@
 <script>
   async function loadCountdowns() {
     try {
-      // Use a relative path for GitHub Pages.
       const res = await fetch('./dates.txt');
       if (!res.ok) throw new Error(`Failed to fetch dates.txt: ${res.status}`);
       const text = await res.text();
