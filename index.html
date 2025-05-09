@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campdown</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #2d2d2d;
+            background-color: #021029;
             color: white; /* Change the text color to white */
             padding: 20px; /* Reduced padding for mobile */
         }
@@ -36,10 +37,13 @@
         }
         /* Specific styles for different countdowns */
         #countdown1 {
-            background-color: #ea791b; /* Green background for the first countdown */
+            background-color: #ea791b; /* Orange background for the first countdown */
         }
         #countdown2 {
-            background-color: #004741; /* Red background for the second countdown */
+            background-color: #004741; /* Dark background for the second countdown */
+        }
+        #countdown3 {
+            background-color: #d400ff; /* Purple background for the third countdown */
         }
         /* Media queries for even smaller devices */
         @media (max-width: 480px) {
@@ -57,19 +61,25 @@
 <h1>Campdown</h1>
 
 <!-- Countdown 1 -->
-<h2>Nyttårs camp</h2>
+<h2>Påskecamp</h2>
 <div class="countdown" id="countdown1"></div>
 <p class="date-text" id="date1"></p>
 
 <!-- Countdown 2 -->
-<h2>Høststevne 1 - Festhelg</h2>
+<h2>Søstrestevnet</h2>
 <div class="countdown" id="countdown2"></div>
 <p class="date-text" id="date2"></p>
 
+<!-- Countdown 3 -->
+<h2>Frivillighetshelg - November</h2>
+<div class="countdown" id="countdown3"></div>
+<p class="date-text" id="date3"></p>
+
 <script>
     // Countdown target dates
-    const countDownDate1 = new Date("December 28, 2024 20:00:00 GMT+0200").getTime();
-    const countDownDate2 = new Date("October 04, 2024 15:00:00 GMT+0200").getTime();
+    const countDownDate1 = new Date("April 27, 2025 17:00:00 GMT+0100").getTime();
+    const countDownDate2 = new Date("March 6, 2025 19:00:00 GMT+0100").getTime();
+    const countDownDate3 = new Date("February 14, 2025 19:00:00 GMT+0100").getTime(); // New countdown date
 
     // Function to start a countdown
     function startCountdown(targetDate, elementId, dateTextId) {
@@ -89,7 +99,7 @@
 
             if (distance < 0) {
                 clearInterval(intervalId);
-                document.getElementById(elementId).innerHTML = "Camp er her!";
+                document.getElementById(elementId).innerHTML = "Event is here!";
                 document.getElementById(dateTextId).innerHTML = "";
             }
         }, 1000);
@@ -97,6 +107,7 @@
 
     startCountdown(countDownDate1, "countdown1", "date1");
     startCountdown(countDownDate2, "countdown2", "date2");
+    startCountdown(countDownDate3, "countdown3", "date3"); // Start countdown for the new event
 </script>
 
 </body>
