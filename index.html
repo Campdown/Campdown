@@ -62,6 +62,8 @@
 </div>
 
 <script>
+  let countdownIntervals = [];
+
   async function loadCountdowns() {
     const res = await fetch('./dates.txt');
     const text = await res.text();
@@ -81,7 +83,14 @@
       }
     });
 
+    function clearCountdowns() {
+      countdownIntervals.forEach(id => clearInterval(id));
+      countdownIntervals = [];
+    }
+
     function render() {
+      clearCountdowns(); // 🔥 Stop old countdowns before rendering new ones
+
       const hash = decodeURIComponent(location.hash.slice(2)).toLowerCase();
       const container = document.getElementById('countdowns');
       container.innerHTML = '';
@@ -89,7 +98,7 @@
       if (hash === 'more') {
         allEntries.forEach(entry => {
           const link = document.createElement('a');
-          link.href = `#/` + encodeURIComponent(entry.name.toLowerCase());
+          link.href = `#/${encodeURIComponent(entry.name.toLowerCase())}`;
           link.textContent = entry.name;
           link.style.display = 'block';
           container.appendChild(link);
@@ -132,11 +141,12 @@
       `;
       container.appendChild(div);
 
-      startCountdown(entry.date, countdownId, dateId);
+      const intervalId = startCountdown(entry.date, countdownId, dateId);
+      countdownIntervals.push(intervalId); // track this timer
     }
 
     function startCountdown(targetDate, elementId, dateTextId) {
-      const interval = setInterval(() => {
+      return setInterval(() => {
         const now = new Date().getTime();
         const distance = targetDate - now;
 
@@ -152,11 +162,12 @@
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        document.getElementById(elementId).innerText =
-          `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
-
-        document.getElementById(dateTextId).innerText =
-          targetDate.toLocaleString('no-NO');
+        const countdownEl = document.getElementById(elementId);
+        const dateTextEl = document.getElementById(dateTextId);
+        if (countdownEl && dateTextEl) {
+          countdownEl.innerText = `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
+          dateTextEl.innerText = targetDate.toLocaleString('no-NO');
+        }
       }, 1000);
     }
 
