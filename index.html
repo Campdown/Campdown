@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Campdown</title>
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -44,7 +44,7 @@
       text-decoration: underline;
     }
 
-    .more-button {
+    .more-button, .back-button {
       display: inline-block;
       background-color: #ea791b;
       color: white;
@@ -56,7 +56,7 @@
       transition: background-color 0.3s;
     }
 
-    .more-button:hover {
+    .more-button:hover, .back-button:hover {
       background-color: #cc6610;
     }
 
@@ -91,7 +91,7 @@
 <h1>Campdown</h1>
 <div id="countdowns"></div>
 
-<div class="info-text">
+<div class="info-text" id="nav-buttons">
   <a class="more-button" href="#/more">Se alle nedtellinger</a>
 </div>
 
@@ -126,7 +126,9 @@
       clearCountdowns();
       const hash = decodeURIComponent(location.hash.slice(2)).toLowerCase();
       const container = document.getElementById('countdowns');
+      const navButtons = document.getElementById('nav-buttons');
       container.innerHTML = '';
+      navButtons.innerHTML = '';
 
       if (hash === 'more') {
         const moreDiv = document.createElement('div');
@@ -138,12 +140,15 @@
           moreDiv.appendChild(link);
         });
         container.appendChild(moreDiv);
+        navButtons.innerHTML = `<a class="back-button" href="#">← Tilbake</a>`;
       } else if (hash) {
         const match = allEntries.find(e => e.name.toLowerCase() === hash);
         if (match) {
           displayCountdown(match, 0);
+          navButtons.innerHTML = `<a class="back-button" href="#">← Tilbake</a>`;
         } else {
           container.innerHTML = '<p>Nedtelling ikke funnet.</p>';
+          navButtons.innerHTML = `<a class="back-button" href="#">← Tilbake</a>`;
         }
       } else {
         const now = new Date();
@@ -160,6 +165,8 @@
             displayCountdown(upcoming[0], index++);
           }
         });
+
+        navButtons.innerHTML = `<a class="more-button" href="#/more">Se alle nedtellinger</a>`;
       }
     }
 
