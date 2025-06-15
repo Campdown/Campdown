@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campdown</title>
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,14 +32,48 @@
     .date-text {
       font-size: 1em;
       margin-top: 10px;
+      color: white;
     }
     .info-text {
       font-size: 1em;
       margin-top: 30px;
     }
+
     a {
       color: #ea791b;
       text-decoration: underline;
+    }
+
+    .more-button {
+      display: inline-block;
+      background-color: #ea791b;
+      color: white;
+      padding: 10px 18px;
+      margin-top: 20px;
+      border-radius: 6px;
+      font-size: 1em;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .more-button:hover {
+      background-color: #cc6610;
+    }
+
+    .more-links a {
+      display: block;
+      margin: 8px auto;
+      padding: 10px;
+      background-color: #222;
+      color: white;
+      width: fit-content;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .more-links a:hover {
+      background-color: #444;
     }
 
     @media (max-width: 480px) {
@@ -58,7 +92,7 @@
 <div id="countdowns"></div>
 
 <div class="info-text">
-  <a href="#/more">More</a>
+  <a class="more-button" href="#/more">Se alle nedtellinger</a>
 </div>
 
 <script>
@@ -89,20 +123,21 @@
     }
 
     function render() {
-      clearCountdowns(); // 🔥 Stop old countdowns before rendering new ones
-
+      clearCountdowns();
       const hash = decodeURIComponent(location.hash.slice(2)).toLowerCase();
       const container = document.getElementById('countdowns');
       container.innerHTML = '';
 
       if (hash === 'more') {
+        const moreDiv = document.createElement('div');
+        moreDiv.className = 'more-links';
         allEntries.forEach(entry => {
           const link = document.createElement('a');
           link.href = `#/${encodeURIComponent(entry.name.toLowerCase())}`;
           link.textContent = entry.name;
-          link.style.display = 'block';
-          container.appendChild(link);
+          moreDiv.appendChild(link);
         });
+        container.appendChild(moreDiv);
       } else if (hash) {
         const match = allEntries.find(e => e.name.toLowerCase() === hash);
         if (match) {
@@ -118,10 +153,11 @@
           grouped[entry.color].push(entry);
         });
 
-        Object.values(grouped).forEach((group, index) => {
+        let index = 0;
+        Object.values(grouped).forEach(group => {
           const upcoming = group.filter(e => e.date > now).sort((a, b) => a.date - b.date);
           if (upcoming.length > 0) {
-            displayCountdown(upcoming[0], index);
+            displayCountdown(upcoming[0], index++);
           }
         });
       }
@@ -142,18 +178,21 @@
       container.appendChild(div);
 
       const intervalId = startCountdown(entry.date, countdownId, dateId);
-      countdownIntervals.push(intervalId); // track this timer
+      countdownIntervals.push(intervalId);
     }
 
     function startCountdown(targetDate, elementId, dateTextId) {
-      return setInterval(() => {
+      const update = () => {
         const now = new Date().getTime();
         const distance = targetDate - now;
+        const el = document.getElementById(elementId);
+        const dateEl = document.getElementById(dateTextId);
+
+        if (!el || !dateEl) return;
 
         if (distance <= 0) {
-          clearInterval(interval);
-          document.getElementById(elementId).innerText = "Event is here!";
-          document.getElementById(dateTextId).innerText = "";
+          el.innerText = "Event is here!";
+          dateEl.innerText = "";
           return;
         }
 
@@ -162,13 +201,12 @@
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        const countdownEl = document.getElementById(elementId);
-        const dateTextEl = document.getElementById(dateTextId);
-        if (countdownEl && dateTextEl) {
-          countdownEl.innerText = `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
-          dateTextEl.innerText = targetDate.toLocaleString('no-NO');
-        }
-      }, 1000);
+        el.innerText = `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
+        dateEl.innerText = targetDate.toLocaleString('no-NO');
+      };
+
+      update();
+      return setInterval(update, 1000);
     }
 
     window.addEventListener('hashchange', render);
