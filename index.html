@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campdown</title>
-  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,27 +32,14 @@
     .date-text {
       font-size: 1em;
       margin-top: 10px;
-      color: white;
     }
     .info-text {
       font-size: 1em;
       margin-top: 30px;
-      color: white;
     }
     a {
       color: #ea791b;
       text-decoration: underline;
-    }
-
-    /* Specific IDs for custom colors, if needed */
-    #countdown1 {
-      background-color: #e14521;
-    }
-    #countdown2 {
-      background-color: #004741;
-    }
-    #countdown3 {
-      background-color: #d400ff;
     }
 
     @media (max-width: 480px) {
@@ -71,80 +58,110 @@
 <div id="countdowns"></div>
 
 <div class="info-text">
-  Telegram Bot: <a href="http://telegram.me/Campdownbot">Click here</a>
+  <a href="#/more">More</a>
 </div>
 
 <script>
   async function loadCountdowns() {
-    try {
-      const res = await fetch('./dates.txt');
-      if (!res.ok) throw new Error(`Failed to fetch dates.txt: ${res.status}`);
-      const text = await res.text();
+    const res = await fetch('./dates.txt');
+    const text = await res.text();
 
-      const groups = text.trim().split(/\r?\n-\r?\n/).map(g => g.trim()).filter(Boolean);
-      const container = document.getElementById('countdowns');
+    const groups = text.trim().split(/\r?\n-\r?\n/).map(g => g.trim()).filter(Boolean);
+    const allEntries = [];
 
-      groups.forEach((group, index) => {
-        const lines = group.split('\n').map(l => l.trim()).filter(Boolean);
-        const entries = [];
-        for (let i = 0; i < lines.length; i += 3) {
-          const name = lines[i];
-          const date = new Date(lines[i + 1]);
-          const color = lines[i + 2];
-          if (!isNaN(date)) {
-            entries.push({ name, date, color });
-          } else {
-            console.error(`Invalid date for "${name}": ${lines[i + 1]}`);
-          }
+    groups.forEach(group => {
+      const lines = group.split('\n').map(l => l.trim()).filter(Boolean);
+      for (let i = 0; i < lines.length; i += 3) {
+        const name = lines[i];
+        const date = new Date(lines[i + 1]);
+        const color = lines[i + 2];
+        if (!isNaN(date)) {
+          allEntries.push({ name, date, color });
         }
+      }
+    });
 
+    function render() {
+      const hash = decodeURIComponent(location.hash.slice(2)).toLowerCase();
+      const container = document.getElementById('countdowns');
+      container.innerHTML = '';
+
+      if (hash === 'more') {
+        allEntries.forEach(entry => {
+          const link = document.createElement('a');
+          link.href = `#/` + encodeURIComponent(entry.name.toLowerCase());
+          link.textContent = entry.name;
+          link.style.display = 'block';
+          container.appendChild(link);
+        });
+      } else if (hash) {
+        const match = allEntries.find(e => e.name.toLowerCase() === hash);
+        if (match) {
+          displayCountdown(match, 0);
+        } else {
+          container.innerHTML = '<p>Nedtelling ikke funnet.</p>';
+        }
+      } else {
         const now = new Date();
-        const upcoming = entries.filter(e => e.date > now).sort((a, b) => a.date - b.date);
-        if (!upcoming.length) {
-          console.warn(`No upcoming events for group #${index + 1}`);
+        const grouped = {};
+        allEntries.forEach(entry => {
+          if (!grouped[entry.color]) grouped[entry.color] = [];
+          grouped[entry.color].push(entry);
+        });
+
+        Object.values(grouped).forEach((group, index) => {
+          const upcoming = group.filter(e => e.date > now).sort((a, b) => a.date - b.date);
+          if (upcoming.length > 0) {
+            displayCountdown(upcoming[0], index);
+          }
+        });
+      }
+    }
+
+    function displayCountdown(entry, index) {
+      const container = document.getElementById('countdowns');
+      const div = document.createElement('div');
+      div.className = 'countdown-container';
+      const countdownId = `countdown${index}`;
+      const dateId = `date${index}`;
+
+      div.innerHTML = `
+        <h2>${entry.name}</h2>
+        <div class="countdown" id="${countdownId}" style="background-color: ${entry.color};"></div>
+        <p class="date-text" id="${dateId}"></p>
+      `;
+      container.appendChild(div);
+
+      startCountdown(entry.date, countdownId, dateId);
+    }
+
+    function startCountdown(targetDate, elementId, dateTextId) {
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance <= 0) {
+          clearInterval(interval);
+          document.getElementById(elementId).innerText = "Event is here!";
+          document.getElementById(dateTextId).innerText = "";
           return;
         }
-        const next = upcoming[0];
 
-        const div = document.createElement('div');
-        div.className = 'countdown-container';
-        div.innerHTML = `
-          <h2>${next.name}</h2>
-          <div class="countdown" id="countdown${index}" style="background-color: ${next.color};"></div>
-          <p class="date-text" id="date${index}"></p>
-        `;
-        container.appendChild(div);
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        startCountdown(next.date, `countdown${index}`, `date${index}`);
-      });
-    } catch (err) {
-      console.error('Error loading countdowns:', err);
+        document.getElementById(elementId).innerText =
+          `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
+
+        document.getElementById(dateTextId).innerText =
+          targetDate.toLocaleString('no-NO');
+      }, 1000);
     }
-  }
 
-  function startCountdown(targetDate, elementId, dateTextId) {
-    const interval = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-
-      if (distance <= 0) {
-        clearInterval(interval);
-        document.getElementById(elementId).innerText = "Event is here!";
-        document.getElementById(dateTextId).innerText = "";
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById(elementId).innerText =
-        `${days} dager ${hours} timer ${minutes} minutter ${seconds} sekunder`;
-
-      document.getElementById(dateTextId).innerText =
-        targetDate.toLocaleString('no-NO');
-    }, 1000);
+    window.addEventListener('hashchange', render);
+    render();
   }
 
   window.addEventListener("DOMContentLoaded", loadCountdowns);
