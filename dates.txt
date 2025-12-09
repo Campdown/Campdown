@@ -36,3 +36,6 @@ September 12, 2025 19:00:00 GMT+0200
 Frivillighetshelg-November
 November 14, 2025 19:00:00 GMT+0200
 #d400ff
+2026 Countdown
+January 1, 2026 00:00:00 GMT+0100
+#6A7B8C
