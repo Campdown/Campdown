@@ -30,6 +30,6 @@ December 4, 2026 19:00:00 GMT+0100
 Frivillighetshelg-November
 November 13, 2026 19:00:00 GMT+0100
 #d400ff
-2026 Countdown
+2027 Countdown
 January 1, 2027 00:00:00 GMT+0100
 #6A7B8C
